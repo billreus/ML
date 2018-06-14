@@ -20,6 +20,11 @@ fig.set(alpha=0.2)
 plt.subplot2grid((2,3),(0,0), colspan=2)
 ```
 即表示一块放置两行三列，以下表为第0行0列且占用两列
+```
+ax1 = fig.add_subplot(231)
+ax2 = fig.add_subplot(232， sharey=ax1)
+```
+表示两行三列第一个
 
 ## 各种图形设置
 ### 柱状图
