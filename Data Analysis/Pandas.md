@@ -1,5 +1,53 @@
 # Pandas基本用法
 
+## 创建数据集
+
+### 创建数据集
+直接生成一个6行*4列的随机列表，列名分别为A.B.C.D
+
+`data = pd.DataFrame(np.random.randn(6,4), columns=list('ABCD'))`
+
+添加行索引时间类
+```
+data = pd.date_range('20180621', periods)
+df = pd.DataFrame(np.random.randn(6,4), index=data, columns=list('ABCD'))
+```
+使用字典创建数据
+`df = pd.DataFrame({'A':np.random.randn(3)})`即行索引默认3行，列索引为A
+```
+df2 = pd.DataFrame({'A':pd.Timestamp('20170101'), 'B':np.random,randn(3)})
+```
+此为AB两列索引。
+
+## 查看数据集
+
+### 查看数据格式
+`df.dtypes`
+
+### 查看前几行数据
+`df.head(5)`默认五行
+
+### 查看后几行数据
+`df.tail(5)`
+
+### 查看数据行索引
+`df.index`
+
+### 查看数据列索引
+`df.columns`
+
+### 查看数据值
+`df.values`
+
+### 查看数据描述
+`df.describe`
+
+### 数据排序
+`df.sort_values(by='列名')`
+
+## 数据选择
+
+
 ## 读取、存储文件
 读取csv文件时，可使用`pd.read_csv("path")`
 存储csv文件时，使用`data.to_csv("path")`
