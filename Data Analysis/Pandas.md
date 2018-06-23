@@ -47,10 +47,23 @@ df2 = pd.DataFrame({'A':pd.Timestamp('20170101'), 'B':np.random,randn(3)})
 
 ## 数据选择
 
+### 数据切片
+`df[a:b, c:d]`前行后列，使用数字
+下面几种可以不使用：直接指定行列
+`df.loc[a:b, c:d]`行列索引，使用行列标签
+`df.iloc[a:b, c:d]`使用数字
+`df.ix[a:b, c:d]`数字标签都可以使用
 
-## 读取、存储文件
+### 特定取某值
+`df.at[dates[0], 'B']`
+
+## 读取保存文件
+
+### csv
 读取csv文件时，可使用`pd.read_csv("path")`
-存储csv文件时，使用`data.to_csv("path")`
+存储csv文件时，使用`data.to_csv("path", encoding='utf-8', index=False)`
+
+## 筛选数据
 
 ## 表格信息
 每行列数据信息统计可以使用`info()`
