@@ -65,6 +65,34 @@ df2 = pd.DataFrame({'A':pd.Timestamp('20170101'), 'B':np.random,randn(3)})
 
 ## 筛选数据
 
+### 使用符号限制条件
+`df[df.D>0]`筛选D列数据中大于0的数据
+`df[(df.D>0)&(df.C<0)]`筛选D列中大于0且C列小于0的所有行
+`df[(df.D>0)|(df.C<0)]`筛选D列中大于0或C列小于0的所有行
+
+### 使用isin筛选特定值，把筛选的值写到另一个表中
+```
+goal_list = [0.232, 0.243, 0.9843]
+df['D'].isin(goal_list)
+```
+会判断df的D列中是否有符合条件的，有返回True，没有返回false
+
+## 增加和删除
+
+### 增加列
+例如增加一列E
+`df['E'] = pd.Series(np.random.randn(6), index=df.index)`
+插入任何位置(例如插入第2列名为a)
+`df.insert(1,'a', np.random.randn(6))`
+
+### 删除列
+永久删除一列
+`del df['a']`
+返回一个删除了的数据(axis=1表示删除列)
+`df1 = df.drop(['D','E'],axis=1)`
+
+## 数据分组
+
 ## 表格信息
 每行列数据信息统计可以使用`info()`
 ```
