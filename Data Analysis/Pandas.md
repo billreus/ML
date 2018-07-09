@@ -38,7 +38,7 @@
         - [合并concat()](#合并concat)
     - [表格信息](#表格信息)
     - [数据叠加](#数据叠加)
-    - [onehotb编码](#onehotb编码)
+    - [onehot编码](#onehot编码)
 
 <!-- /TOC -->
 
@@ -95,7 +95,7 @@ df2 = pd.DataFrame({'A':pd.Timestamp('20170101'), 'B':np.random,randn(3)}) # 此
 ```
 df[a:b, c:d]
 ```
-下面几种可以不使用：直接指定行列
+下面几种可以不使用数字直接指定行列
 ```
 df.loc[a:b, c:d] # 行列索引，使用行列标签
 df.iloc[a:b, c:d] # 使用数字
@@ -251,7 +251,7 @@ data.survived.value_counts()
 ```
 即表示data数据的survived列的数据和
 
-## onehotb编码
+## onehot编码
 ```
 dummies_Cabin = pd.get_dummies(data_train['Cabin'], prefix= 'Cabin')
 
