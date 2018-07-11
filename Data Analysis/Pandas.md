@@ -20,6 +20,9 @@
     - [筛选数据](#筛选数据)
         - [使用符号限制条件](#使用符号限制条件)
         - [使用isin筛选特定值，把筛选的值写到另一个表中](#使用isin筛选特定值把筛选的值写到另一个表中)
+    - [修改索引](#修改索引)
+        - [设置索引(set_index)](#设置索引set_index)
+        - [还原默认索引(reset_index)](#还原默认索引reset_index)
     - [增加和删除](#增加和删除)
         - [增加列](#增加列)
         - [删除列](#删除列)
@@ -105,6 +108,12 @@ df.ix[a:b, c:d] # 数字标签都可以使用
 ### 特定取某值
 `df.at[dates[0], 'B']`
 
+### 离散化和面元划分（设置多个范围，将数据划分其中）
+```
+age = pd.cut(train_test['Age'], bins=[0,10,18,30,50,100], labels=[1,2,3,4,5], right=False)
+```
+bins为划分的数据段，lebels为标签（面元名称），right=False为左开右闭区间默认时相反，
+
 ## 读取保存文件
 
 ### csv
@@ -132,6 +141,22 @@ goal_list = [0.232, 0.243, 0.9843]
 df['D'].isin(goal_list)
 ```
 会判断df的D列中是否有符合条件的，有返回True，没有返回false
+
+## 修改索引
+
+### 设置索引(set_index)
+```
+data.set_index(keys, drop=True, append=False, inplace=False, verify_integrity=False)
+```
+append添加新索引，drop为False，inplace为True时，索引将会还原为列
+keys设置作为索引的标签列
+
+### 还原默认索引(reset_index)
+```
+DataFrame.reset_index(level=None, drop=False, inplace=False, col_level=0, col_fill=”) 
+```
+level控制了具体要还原的那个等级的索引 ,drop为False则索引列会被还原为普通列，否则会丢失
+还原索引默认空即可把原表格还原成默认的数字顺序索引
 
 ## 增加和删除
 

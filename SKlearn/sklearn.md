@@ -1,9 +1,8 @@
-# RFR
-
 # linear
+
 ## 逻辑回归
-from sklearn import linear_model
 ```
+from sklearn import linear_model
 # 训练
 clf = linear_model.LogisticRegression(C=1.0, penalty='l1', tol=1e-6)
 clf.fit(X, y)
@@ -13,8 +12,60 @@ predictions = clf.predict(test)
 ```
 带 L1 正则的 logistic 回归,tol为停止误差,求解器默认为sag和saga基于平均随机梯度下降算法
 
+# 贝叶斯
+
+## 贝叶斯岭回归
+```
+from sklearn import linear_model
+lin = linear_model.BayesianRidge()
+# 预测
+lin.fit(x,y)
+# 填入
+train.loc[(train['age'].isnull()), 'age'] = lin.predict(missing_x)
+```
+
+# 随机森林
+```
+from sklearn.ensemble import RandomForestClassifier
+
+rf = RandomForestClassifier(n_estimators=150,min_samples_leaf=3,max_depth=6,oob_score=True)
+rf.fit(train_x,train_y)
+
+test['survived'] = rf.predict(test_x)
+```
+# 支持向量机
+```
+from sklearn import svm
+from sklearn.model_selection import GridSearchCV
+svc = svm.SVC()
+param = {'C':[0.001,0.01,0.1,1,10], "max_iter":[100,250]}
+clf = GridSearchCV(svc,param,cv=5,n_jobs=-1,verbose=1,scoring="roc_auc")
+clf.fit(train_data_X_sd,train_data_Y)
+
+clf.best_params_
+
+svc = svm.SVC(C=1,max_iter=250)
+
+# 训练模型并预测结果
+svc.fit(train_data_X_sd,train_data_Y)
+svc.predict(test_data_X_sd)
+
+# 打印结果
+test["Survived"] = svc.predict(test_data_X_sd)
+SVM = test[['PassengerId','Survived']].set_index('PassengerId')
+SVM.to_csv('svm1.csv')
+```
 
 # 数据处理
+
+## GridSearchCV超参数优化
+```
+sklearn.model_seletion.GridSearchCV
+param = {'C':[0.001,0.01,0.1,1,10], "max_iter":[100,250]}
+clf = GridSearchCV(svc,param,cv=5,n_jobs=-1,verbose=1,scoring="roc_auc")
+clf.fit(train_data_X_sd,train_data_Y)
+```
+
 
 ## 使用rfr补全缺失数据
 
@@ -55,6 +106,15 @@ age_scale_param = scaler.fit(df['Age'].values.reshape(-1, 1))
 df['Age_scaled'] = scaler.fit_transform(df['Age'].values.reshape(-1, 1), age_scale_param)
 ```
 把Age归化到（-1，1）之间，并加入到表中。其中reshape表示设置n个数为n行一列表
+
+基本的标准化
+```
+from sklearn.preprocessing import StandardScaler
+ss = StandardScaler()
+ss.fit(missing_age_X_train)
+missing_age_X_train = ss.transform(missing_age_X_train)
+missing_age_X_test = ss.transform(missing_age_X_test)
+```
 
 ## 数据与结果相关度
 ```
