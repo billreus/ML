@@ -21,7 +21,6 @@
     - [读取保存文件](#读取保存文件)
         - [csv](#csv)
     - [筛选数据](#筛选数据)
-        - [判断缺失值](#判断缺失值)
         - [使用符号限制条件](#使用符号限制条件)
         - [使用isin筛选特定值，把筛选的值写到另一个表中](#使用isin筛选特定值把筛选的值写到另一个表中)
     - [修改索引](#修改索引)
@@ -35,6 +34,7 @@
         - [aggregate()实现数据分组计算](#aggregate实现数据分组计算)
         - [size()查看各组数据量](#size查看各组数据量)
     - [处理缺失值](#处理缺失值)
+        - [判断缺失值](#判断缺失值)
         - [用固定值代替](#用固定值代替)
         - [用统计值代替](#用统计值代替)
         - [用插值法填补缺失值](#用插值法填补缺失值)
@@ -55,8 +55,9 @@
 
 ### 创建数据集
 直接生成一个6行*4列的随机列表，列名分别为A.B.C.D
-
-`data = pd.DataFrame(np.random.randn(6,4), columns=list('ABCD'))`
+```
+data = pd.DataFrame(np.random.randn(6,4), columns=list('ABCD'))
+```
 
 添加行索引时间类
 ```
@@ -135,7 +136,9 @@ df.ix[a:b, c:d] # 数字标签都可以使用
 ```
 
 ### 特定取某值
-`df.at[dates[0], 'B']`
+```
+df.at[dates[0], 'B']
+```
 
 ### 离散化和面元划分（设置多个范围，将数据划分其中）
 ```
@@ -156,11 +159,6 @@ data.to_csv("path", encoding='utf-8', index=False)
 ```
 
 ## 筛选数据
-
-### 判断缺失值
-```
-pd.isnull(df) # 返回True，False
-```
 
 ### 使用符号限制条件
 ```
@@ -240,6 +238,11 @@ df.size() # 即可看到每个分组内的数据个数
 
 ## 处理缺失值
 
+### 判断缺失值
+```
+pd.isnull(df) # 返回True，False
+```
+
 ### 用固定值代替
 ```
 df.fillna(0) # 用0代替缺失值
@@ -266,7 +269,9 @@ df.interpolate()
 ```
 
 ### 删除缺失值
-`df.dropna(axis=0,1)`
+```
+df.dropna(axis=0,1)
+```
 
 ## 排序与合并
 
@@ -309,6 +314,15 @@ data.describe()
 data.survived.value_counts()
 ```
 即表示data数据的survived列的数据和
+
+## 自定义函数
+自己def一个函数后可以使用apply()函数进行调用
+```
+def hundredth_row(column):
+    hundredth_item = column.loc[99]
+    return hundredth_item
+hundredth_row = data.apply(hundredth_row)
+```
 
 ## onehot编码
 ```
