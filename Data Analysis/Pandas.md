@@ -45,6 +45,7 @@
         - [合并concat()](#合并concat)
     - [表格信息](#表格信息)
     - [数据叠加](#数据叠加)
+    - [自定义函数](#自定义函数)
     - [onehot编码](#onehot编码)
 
 <!-- /TOC -->
@@ -54,11 +55,10 @@
 ## 创建数据集
 
 ### 创建数据集
-直接生成一个6行*4列的随机列表，列名分别为A.B.C.D
+直接生成一个6行*4列的随机列表，列名分别为A.B.C.D,行名1,2,3,4
 ```
-data = pd.DataFrame(np.random.randn(6,4), columns=list('ABCD'))
+data = pd.DataFrame(np.random.randn(6,4), columns=list('ABCD'), index=['1','2','3','4'])
 ```
-
 添加行索引时间类
 ```
 data = pd.date_range('20180621', periods)
@@ -173,6 +173,12 @@ goal_list = [0.232, 0.243, 0.9843]
 df['D'].isin(goal_list)
 ```
 会判断df的D列中是否有符合条件的，有返回True，没有返回false
+
+### 移除重复数据
+```
+data.duplicated() # 返回每个数的布尔值，重复为True
+data.drop_duplicates() # 返回一个移除了重复值的数据
+```
 
 ## 修改索引
 
@@ -296,6 +302,16 @@ pd.concat([df1,df2])
 拼接后行索引忽略之前重新生成
 ```
 pd.concat([df1,df2],ignore_index=True)
+```
+
+### 重塑层次化索引
+将数据列旋转成行
+```
+data.stack()
+```
+将数据行旋转成列
+```
+data.unstack()
 ```
 
 ## 表格信息
