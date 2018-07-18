@@ -257,6 +257,13 @@ df.fillna(method='pad') # 用前一个数据代替
 df.fillna(method='bfill') # 用后一个数据代替
 df.fillna(method='pad', limit=1) # 用limit限制每列代替NaN的数目
 ```
+有时有些固定值代表数值缺失，需要使用替换
+```
+data.replace(-999, np.nan)
+data.replace([-999, -1000], np.nan)
+data.replace([-999, -1000], [np.nan, 0])
+data.replace({-999: np.nan, -1000: 0})
+```
 
 ### 用统计值代替
 用平均数代替
@@ -304,6 +311,13 @@ pd.concat([df1,df2])
 pd.concat([df1,df2],ignore_index=True)
 ```
 
+### 排列
+随机重排序可以使用
+```
+sampler = np.random.permutation(5) # 一列五个随机排
+data.take(sampler)
+```
+
 ### 重塑层次化索引
 将数据列旋转成行
 ```
@@ -330,6 +344,37 @@ data.describe()
 data.survived.value_counts()
 ```
 即表示data数据的survived列的数据和
+
+## 字符串操作
+### 分割字符串
+大部分的字符串使用split拆分成数段即可
+```
+val.split(',') # 以逗号切割
+pieces = [x.strip() for x in val.split(',')] # strip用来修建空白和换行符
+```
+
+### 正则表达式（regex）
+例如拆分一个字符串
+```
+import re
+text = 'foo bar\t baz \tqux'
+re.split('\s+', text) # \s+表示一个或多个空白
+
+out:['foo', 'bar', 'baz', 'qux']
+```
+该部分参考书P219
+
+### 矢量化字符串
+查找是否含有特定字符
+```
+data.str.contains('gmail') # 返回布尔值
+```
+转化成矢量值
+```
+match = data.str.match(pattern, flags=re.IGNORECASE)
+match.str.get(1) # 获取第一列
+match.str[0] # 获取第0列
+```
 
 ## 自定义函数
 自己def一个函数后可以使用apply()函数进行调用
