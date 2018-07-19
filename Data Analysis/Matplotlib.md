@@ -14,8 +14,10 @@
 <!-- /TOC -->
 
 ## 初始设置
-`import matplotlib.pyplot as plt`
-`import seaborn as sns`
+```
+import matplotlib.pyplot as plt
+import seaborn as sns
+```
 
 对于图标进行初始设置和背景设置
 ```
@@ -38,28 +40,47 @@ plt.subplot2grid((2,3),(0,0), colspan=2) # 表示一块放置两行三列，下�
 指定框图位置方法二
 ```
 # 表示两行三列第一个
-ax1 = fig.add_subplot(231)
-ax2 = fig.add_subplot(232， sharey=ax1)
+ax1 = fig.add_subplot(2,3,1)
+ax2 = fig.add_subplot(2,3,2， sharey=ax1) # y轴刻度
+```
+### subplot周围间距
+```
+subplots_adjust(wspace=宽度百分比, hspace=高度百分比)
 ```
 ### 坐标轴优化
 ```
 plt.xticks(rotation=角度) # x轴坐标注释角度
 ```
-### 图表标题和轴的注释
-图表标题使用
+
+## 刻度、标签、图例
+### 标签 
+图表标题
 ```
 plt.title(" ")
 ```
-坐标轴使用
+### 刻度 
+轴的注释
 ```
 plt.xlabel('')
 ```
+轴的刻度范围
+```
+ticks = ax.set_xticks([0, 250, 500, 750, 1000]) # x刻度值
+labels = ax.set_xticklabels(['one', 'two', 'three'], rotation=30, fontsize='small') # x刻度值取的名字
+```
+
+### 图例
 显示图例
 ```
 plt.legend(('图例解释1','解释2','解释3'),loc='best')
 ```
 
 ## 各种图形设置
+### 线型图
+```
+data.plot()
+```
+其中label可用于标签，ax可设置对象，alpha可设置透明度，kind可以是line、bar、bath、kde，xticks可以设置x轴刻度值，xlim可以设置x轴界限
 ### 柱状图
 传统柱状图
 ```
@@ -72,6 +93,10 @@ Survived_0 = data_train.Embarked[data_train.Survived == 0].value_counts()
 Survived_1 = data_train.Embarked[data_train.Survived == 1].value_counts()
 df=pd.DataFrame({u'获救':Survived_1, u'未获救':Survived_0})
 df.plot(kind='bar', stacked=True)
+```
+也可以在行标签有类别名时使用,如下可以实现每个one数据在一起，two数据在一起。
+```
+df = DataFrame(np.random.rand(6, 4), index=['one', 'two', 'three'], columns=pd.Index(['A', 'B', 'C'], name='number'))
 ```
 如果需要两个柱子对比可以使用sns的绘图(自带统计累加)
 ```
@@ -123,4 +148,9 @@ sns.heatmap(data, vmin=-1, vmax=1, annot=True, square=True)
 ```
 plt.rcParams['font.sans-serif']=['SimHei']
 plt.rcParams['axes.unicode_minus']=False
+```
+
+## 图片保存
+```
+plt.savefig('figpath.svg')
 ```
