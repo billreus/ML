@@ -23,6 +23,7 @@
     - [筛选数据](#筛选数据)
         - [使用符号限制条件](#使用符号限制条件)
         - [使用isin筛选特定值，把筛选的值写到另一个表中](#使用isin筛选特定值把筛选的值写到另一个表中)
+        - [移除重复数据](#移除重复数据)
     - [修改索引](#修改索引)
         - [设置索引(set_index)](#设置索引set_index)
         - [还原默认索引(reset_index)](#还原默认索引reset_index)
@@ -43,8 +44,14 @@
         - [排序sort_value()](#排序sort_value)
         - [合并merge()](#合并merge)
         - [合并concat()](#合并concat)
+        - [排列](#排列)
+        - [重塑层次化索引](#重塑层次化索引)
     - [表格信息](#表格信息)
     - [数据叠加](#数据叠加)
+    - [字符串操作](#字符串操作)
+        - [分割字符串](#分割字符串)
+        - [正则表达式（regex）](#正则表达式regex)
+        - [矢量化字符串](#矢量化字符串)
     - [自定义函数](#自定义函数)
     - [onehot编码](#onehot编码)
 
@@ -229,6 +236,14 @@ gruop_ID = df.groupy('ID')
 以两列以上进行分组
 ```
 gruop_id = df.groupby(['ID','bill'])
+gruop_id = df.groupby(['ID','bill']).size() # 返回一个含分组大小的Series
+```
+
+### 聚合
+```
+def peak_to_peak(arr):
+    return arr.max() - arr.min()
+data.agg(peak_to_peak)
 ```
 
 ### aggregate()实现数据分组计算
