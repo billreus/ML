@@ -16,6 +16,7 @@
         - [判断结尾内容](#判断结尾内容)
     - [数据选择](#数据选择)
         - [数据切片](#数据切片)
+        - [数据划分](#数据划分)
         - [特定取某值](#特定取某值)
         - [离散化和面元划分（设置多个范围，将数据划分其中）](#离散化和面元划分设置多个范围将数据划分其中)
     - [读取保存文件](#读取保存文件)
@@ -32,16 +33,20 @@
         - [删除列](#删除列)
     - [数据分组](#数据分组)
         - [利用groupby（）进行分组](#利用groupby进行分组)
+        - [单列运算lambda()](#单列运算lambda)
+        - [聚合](#聚合)
         - [aggregate()实现数据分组计算](#aggregate实现数据分组计算)
         - [size()查看各组数据量](#size查看各组数据量)
     - [处理缺失值](#处理缺失值)
         - [判断缺失值](#判断缺失值)
         - [用固定值代替](#用固定值代替)
         - [用统计值代替](#用统计值代替)
+        - [用众数填补缺失值](#用众数填补缺失值)
         - [用插值法填补缺失值](#用插值法填补缺失值)
         - [删除缺失值](#删除缺失值)
     - [排序与合并](#排序与合并)
         - [排序sort_value()](#排序sort_value)
+        - [找出最大值nlargest](#找出最大值nlargest)
         - [合并merge()](#合并merge)
         - [合并concat()](#合并concat)
         - [排列](#排列)
@@ -142,6 +147,13 @@ df.iloc[a:b, c:d] # 使用数字
 df.ix[a:b, c:d] # 数字标签都可以使用
 ```
 
+### 数据划分
+```
+pd.qcut（x，q，labels = None，retbins = False，precision = 3，duplicates ='raise' ）
+```
+可以自动把数据集切分成q个块，通常使用x,q。x为数据，q为切分个数。
+
+
 ### 特定取某值
 ```
 df.at[dates[0], 'B']
@@ -239,11 +251,35 @@ gruop_id = df.groupby(['ID','bill'])
 gruop_id = df.groupby(['ID','bill']).size() # 返回一个含分组大小的Series
 ```
 
+### 单列运算lambda()
+DataFrame的一列就是一个Series, 可以通过map来对一列进行操作：
+```
+df['col2'] = df['col1'].map(lambda x: x**2)
+
+# 其中lambda等价于：
+define square(x):
+    return (x ** 2)
+```
+
+要对DataFrame的多个列同时进行运算，可以使用apply，例如col3 = col1 + 2 * col2:
+```
+df['col3'] = df.apply(lambda x: x['col1'] + 2 * x['col2'], axis=1)
+```
+
+结合groupby与transform来方便地实现类似SQL中的聚合运算的操作：
+```
+df['col3'] = df.groupby('col1')['col2'].transform(lambda x: (x.sum() - x) / x.count())
+```
+
 ### 聚合
 ```
 def peak_to_peak(arr):
     return arr.max() - arr.min()
 data.agg(peak_to_peak)
+```
+在使用groupby分组完成后对数据进行分析求平均中位数等可以使用agg()函数
+```
+data.groupby(['ylabel'])[['xlabel']].agg(['mean','median','count'])
 ```
 
 ### aggregate()实现数据分组计算
@@ -264,6 +300,13 @@ df.size() # 即可看到每个分组内的数据个数
 pd.isnull(df) # 返回True，False
 ```
 
+缺失值统计排序，且显示大于0的
+```
+total= train_test.isnull().sum().sort_values(ascending=False)
+
+total[total>0]
+```
+
 ### 用固定值代替
 ```
 df.fillna(0) # 用0代替缺失值
@@ -271,6 +314,10 @@ df.fillna('missing') # 用一个字符串代替缺失值
 df.fillna(method='pad') # 用前一个数据代替
 df.fillna(method='bfill') # 用后一个数据代替
 df.fillna(method='pad', limit=1) # 用limit限制每列代替NaN的数目
+
+zero_col = ['MasVnrArea', 'GarageArea', 'BsmtFinSF2', 'TotalBsmtSF']
+for zzero in zero_col:
+    train_test[zzero].fillna(0, inplace=True)
 ```
 有时有些固定值代表数值缺失，需要使用替换
 ```
@@ -290,7 +337,13 @@ df.fillna(df.mean())
 df.fillna(df.mean()['one':'two'])
 ```
 
-###用插值法填补缺失值
+### 用众数填补缺失值
+mode会把col列的数中使用最多的提取出来
+```
+fillna(data[col].mode()[0], inplace=True)
+```
+
+### 用插值法填补缺失值
 插值法即通过两点间估计中间点的值
 ```
 df.interpolate()
@@ -309,6 +362,12 @@ df.dropna(axis=0,1)
 df2 = df.sort_value(by='ID')
 ```
 
+### 找出最大值nlargest
+在表格中找到最大的n个值
+```
+df = df.nlargest(n, 'ID')
+```
+
 ### 合并merge()
 将两个表进行合并可使用该函数
 例如将over和user两个表按ID进行合并，当ID不同时按右边为基准
@@ -324,6 +383,8 @@ pd.concat([df1,df2])
 拼接后行索引忽略之前重新生成
 ```
 pd.concat([df1,df2],ignore_index=True)
+
+pd.concat((df1,df2)).reset_index(drop=True)
 ```
 
 ### 排列

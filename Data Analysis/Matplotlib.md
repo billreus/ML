@@ -146,8 +146,9 @@ data.plot(kind='kde')
 
 ### 热力图
 ```
-sns.heatmap(data, vmin=-1, vmax=1, annot=True, square=True)
+sns.heatmap(data, vmin=-1, vmax=1, annot=True, square=True, annot_kws={'size':10}, yticklabels=col.values, xticklabels=col.values)
 ```
+vmin,vmax为色彩数值范围，annot为方形中间显示数字，square为方形，annot_kws为数字的字体大小，ticklabels为xy轴名。
 
 ## 图像显示
 `plt.show()`
