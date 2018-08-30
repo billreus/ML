@@ -117,9 +117,9 @@ arr[x: y]
 ```
 cov() #用于计算纯粹数学上的协方差
 
-corr() #常用数值优化在-1到1之间
+corr() #常用数值优化在-1到1之间,返回值是表格
 
-np.corrcoef(dataframe) #必须是矩阵
+np.corrcoef(dataframe) #必须是矩阵，返回值是array，-1,1
 ```
 * 注：对于cov和corrcoef来说，矩阵[[a1, a2, a3],[b1, b2, b3]]每个a表示一列a元素的3个样本，b同理，得出协方差的矩阵应该为2*2.
 
