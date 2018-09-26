@@ -72,10 +72,26 @@ train_test = pd.get_dummies(train_test)
 train_X = train_test[:ntrain]
 test_X = train_test[ntrain:]
 
+
+class grid():
+    def __init__(self, model):
+        self.model = model
+
+    def grid_get(self, X, y, param_grid):
+        grid_search = GridSearchCV(self.model, param_grid, cv=5,
+                                   return_train_score=True)
+        grid_search.fit(X, y)
+        print(grid_search.best_params_, grid_search.best_score_)
+        grid_search.cv_results_['mean_test_score'] = grid_search.cv_results_['mean_test_score']#np.sqrt(-grid_search.cv_results_['mean_test_score'])
+        print(pd.DataFrame(grid_search.cv_results_)[['params', 'std_test_score', 'mean_test_score']])
+
+param_test1 = {'n_estimators':[100], 'n_jobs': [-1], 'max_depth':[36], 'min_samples_split':range(2,23,10),'min_samples_leaf':range(10,40,10)}
+grid(RandomForestClassifier()).grid_get(train_X,train_y,param_test1)
+'''
 def model_cv(model, x, y):
     score = cross_val_score(model, x, y,cv=5)#,scoring='f1'
     return score
-'''
+
 models = [RandomForestClassifier()]
 names = ['rf']
 
@@ -83,14 +99,14 @@ for name, model in zip(names, models):
     Score = model_cv(model, train_X,train_y)
     print("{}: {:.6f}, {:.4f}".format(name,Score.mean(),Score.std()))
 '''
-
+'''
 rf_model = RandomForestClassifier()
 rf_model.fit(train_X, train_y)
 pred = rf_model.predict(test_X)
 pred = le.inverse_transform(pred)
 test['predict'] = pred
 test[['user_id', 'predict']].to_csv('./result/rf.csv', index=False)
-
+'''
 
 """
 clf = lgb.LGBMClassifier(
