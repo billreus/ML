@@ -78,15 +78,19 @@ class grid():
         self.model = model
 
     def grid_get(self, X, y, param_grid):
-        grid_search = GridSearchCV(self.model, param_grid, cv=5,
+        grid_search = GridSearchCV(self.model, param_grid, cv=2,
                                    return_train_score=True)
         grid_search.fit(X, y)
         print(grid_search.best_params_, grid_search.best_score_)
         grid_search.cv_results_['mean_test_score'] = grid_search.cv_results_['mean_test_score']#np.sqrt(-grid_search.cv_results_['mean_test_score'])
         print(pd.DataFrame(grid_search.cv_results_)[['params', 'std_test_score', 'mean_test_score']])
 
-param_test1 = {'n_estimators':[100], 'n_jobs': [-1], 'max_depth':[36], 'min_samples_split':range(2,23,10),'min_samples_leaf':range(10,40,10)}
-grid(RandomForestClassifier()).grid_get(train_X,train_y,param_test1)
+param_test1 = {'n_estimators':[100], 'n_jobs': [-1], 'max_depth':[36], 'min_samples_split':[2],'min_samples_leaf':[1], 'max_features':[14]}
+#grid(RandomForestClassifier()).grid_get(train_X,train_y,param_test1)
+
+param_rf = {'num_leaves':[180], 'max_depth':[8], 'learning_rate':[0.1],'seed':[1500],'colsample_bytree':[0.6],'subsample':[0.7]}
+#grid(lgb.LGBMClassifier(bjective='multiclass', boosting_type='gbdt')).grid_get(train_X,train_y,param_rf)
+
 '''
 def model_cv(model, x, y):
     score = cross_val_score(model, x, y,cv=5)#,scoring='f1'
@@ -100,7 +104,7 @@ for name, model in zip(names, models):
     print("{}: {:.6f}, {:.4f}".format(name,Score.mean(),Score.std()))
 '''
 '''
-rf_model = RandomForestClassifier()
+rf_model = RandomForestClassifier(n_estimators=100, n_jobs=-1, max_depth=36, min_samples_split=2, min_samples_leaf=1, max_features=14, oob_score=True)
 rf_model.fit(train_X, train_y)
 pred = rf_model.predict(test_X)
 pred = le.inverse_transform(pred)
@@ -108,23 +112,17 @@ test['predict'] = pred
 test[['user_id', 'predict']].to_csv('./result/rf.csv', index=False)
 '''
 
-"""
-clf = lgb.LGBMClassifier(
-                bjective='multiclass',
-                boosting_type='gbdt',
-                num_leaves=35,
-                max_depth=8,
-                learning_rate=0.05,
-                seed=2018,
-                colsample_bytree=0.8,
-                subsample=0.9,
-                n_estimators=2000)
-clf.fit(train_X, train_y)
-pred = clf.predict(test_X)
+
+clf = lgb.LGBMClassifier(bjective='multiclass',boosting_type='gbdt',num_leaves=35,max_depth=8,learning_rate=0.05,
+                         seed=2018,colsample_bytree=0.8,subsample=0.9,n_estimators=2000)
+clf1 = lgb.LGBMClassifier(bjective='multiclass',boosting_type='gbdt',num_leaves=180,max_depth=8,learning_rate=0.1,
+                         seed=1500,colsample_bytree=0.6,subsample=0.7,n_estimators=2000)
+clf1.fit(train_X, train_y)
+pred = clf1.predict(test_X)
 pred = le.inverse_transform(pred)
 test['predict'] = pred
-test[['user_id', 'predict']].to_csv('./result/lgb.csv', index=False)
-"""
+test[['user_id', 'predict']].to_csv('./result/lgb1.csv', index=False)
+
 
 '''
 clf = XGBClassifier(max_depth=12, learning_rate=0.05,
