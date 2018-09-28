@@ -53,7 +53,7 @@ train_test = pd.concat((train_copy, test)).reset_index(drop=True)
 
 train_test.drop('user_id', axis = 1, inplace=True)
 #train_test.drop('net_service', axis = 1, inplace=True)
-#train_test.drop('many_over_bill', axis = 1, inplace=True)
+train_test.drop('many_over_bill', axis = 1, inplace=True)
 
 label = train.pop('current_service')
 le = LabelEncoder()
@@ -61,7 +61,7 @@ train_y = le.fit_transform(label)
 
 train_test['service_type'] = train_test['service_type'].astype(str)
 train_test['is_mix_service'] = train_test['is_mix_service'].astype(str)
-train_test['many_over_bill'] = train_test['many_over_bill'].astype(str)
+#train_test['many_over_bill'] = train_test['many_over_bill'].astype(str)
 train_test['contract_type'] = train_test['contract_type'].astype(str)
 train_test['is_promise_low_consume'] = train_test['is_promise_low_consume'].astype(str)
 train_test['net_service'] = train_test['net_service'].astype(str)
@@ -88,9 +88,14 @@ class grid():
 param_test1 = {'n_estimators':[100], 'n_jobs': [-1], 'max_depth':[36], 'min_samples_split':[2],'min_samples_leaf':[1], 'max_features':[14]}
 #grid(RandomForestClassifier()).grid_get(train_X,train_y,param_test1)
 
-param_rf = {'num_leaves':[180], 'max_depth':[8], 'learning_rate':[0.1],'seed':[1500],'colsample_bytree':[0.6],'subsample':[0.7]}
-#grid(lgb.LGBMClassifier(bjective='multiclass', boosting_type='gbdt')).grid_get(train_X,train_y,param_rf)
+param_rf = {}
+# 'num_leaves':[180], 'max_depth':[8], 'learning_rate':[0.1],'seed':[1500],'colsample_bytree':[0.6],'subsample':[0.7]
+#,num_leaves=180,max_depth=8,learning_rate=0.1,seed=1500,colsample_bytree=0.6,subsample=0.7
+#,num_leaves=35,max_depth=8,learning_rate=0.05,seed=2018,colsample_bytree=0.8,subsample=0.9
 
+#grid(lgb.LGBMClassifier(bjective='multiclass', boosting_type='gbdt',num_leaves=35,max_depth=8,learning_rate=0.05,
+ #                        seed=2018,colsample_bytree=0.8,subsample=0.9)).grid_get(train_X,train_y,param_rf)
+#,n_estimators=2000
 '''
 def model_cv(model, x, y):
     score = cross_val_score(model, x, y,cv=5)#,scoring='f1'
@@ -117,11 +122,11 @@ clf = lgb.LGBMClassifier(bjective='multiclass',boosting_type='gbdt',num_leaves=3
                          seed=2018,colsample_bytree=0.8,subsample=0.9,n_estimators=2000)
 clf1 = lgb.LGBMClassifier(bjective='multiclass',boosting_type='gbdt',num_leaves=180,max_depth=8,learning_rate=0.1,
                          seed=1500,colsample_bytree=0.6,subsample=0.7,n_estimators=2000)
-clf1.fit(train_X, train_y)
-pred = clf1.predict(test_X)
+clf.fit(train_X, train_y)
+pred = clf.predict(test_X)
 pred = le.inverse_transform(pred)
 test['predict'] = pred
-test[['user_id', 'predict']].to_csv('./result/lgb1.csv', index=False)
+test[['user_id', 'predict']].to_csv('./result/lgb0_overbill.csv', index=False)
 
 
 '''
