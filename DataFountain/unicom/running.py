@@ -43,6 +43,24 @@ test['2_total_fee'] = test['2_total_fee'].apply(lambda x : float(x))
 train['3_total_fee'] = train['3_total_fee'].apply(lambda x : float(x))
 test['3_total_fee'] = test['3_total_fee'].apply(lambda x : float(x))
 
+#清洗
+train = train.drop(train[train['1_total_fee'] > 3100].index)
+train = train.drop(train[train['2_total_fee'] > 3100].index)
+train = train.drop(train[train['3_total_fee'] > 3100].index)
+train = train.drop(train[train['4_total_fee'] > 3100].index)
+train = train.drop(train[train['month_traffic'] > 6000].index)
+'''无变换
+train = train.drop(train[(train['contract_time'] > 0) &(train['current_service'] == 3)].index)
+train = train.drop(train[(train['contract_time'] > 0) &(train['current_service'] == 4)].index)
+train = train.drop(train[(train['contract_time'] > 0) &(train['current_service'] == 5)].index)
+'''
+train = train.drop(train[train['pay_times'] > 30].index)
+train = train.drop(train[train['last_month_traffic'] > 5000].index)
+#train = train.drop(train[train['local_trafffic_month'] > 10000].index) 试一下20000
+train = train.drop(train[train['local_caller_time'] > 1500].index)
+#train = train.drop(train[train['service1_caller_time'] > 1500].index)
+#train = train.drop(train[train['service2_caller_time'] > 5000].index)
+
 ntrain = train.shape[0]
 ntest = test.shape[0]
 
@@ -53,7 +71,8 @@ train_test = pd.concat((train_copy, test)).reset_index(drop=True)
 
 train_test.drop('user_id', axis = 1, inplace=True)
 #train_test.drop('net_service', axis = 1, inplace=True)
-train_test.drop('many_over_bill', axis = 1, inplace=True)
+#train_test.drop('many_over_bill', axis = 1, inplace=True)
+
 
 label = train.pop('current_service')
 le = LabelEncoder()
@@ -61,7 +80,7 @@ train_y = le.fit_transform(label)
 
 train_test['service_type'] = train_test['service_type'].astype(str)
 train_test['is_mix_service'] = train_test['is_mix_service'].astype(str)
-#train_test['many_over_bill'] = train_test['many_over_bill'].astype(str)
+train_test['many_over_bill'] = train_test['many_over_bill'].astype(str)
 train_test['contract_type'] = train_test['contract_type'].astype(str)
 train_test['is_promise_low_consume'] = train_test['is_promise_low_consume'].astype(str)
 train_test['net_service'] = train_test['net_service'].astype(str)
@@ -94,7 +113,7 @@ param_rf = {}
 #,num_leaves=35,max_depth=8,learning_rate=0.05,seed=2018,colsample_bytree=0.8,subsample=0.9
 
 #grid(lgb.LGBMClassifier(bjective='multiclass', boosting_type='gbdt',num_leaves=35,max_depth=8,learning_rate=0.05,
- #                        seed=2018,colsample_bytree=0.8,subsample=0.9)).grid_get(train_X,train_y,param_rf)
+#                        seed=2018,colsample_bytree=0.8,subsample=0.9)).grid_get(train_X,train_y,param_rf)
 #,n_estimators=2000
 '''
 def model_cv(model, x, y):
@@ -126,7 +145,7 @@ clf.fit(train_X, train_y)
 pred = clf.predict(test_X)
 pred = le.inverse_transform(pred)
 test['predict'] = pred
-test[['user_id', 'predict']].to_csv('./result/lgb0_overbill.csv', index=False)
+test[['user_id', 'predict']].to_csv('./result/lgb_clear1.0.csv', index=False)
 
 
 '''
@@ -141,5 +160,5 @@ clf.fit(train_X, train_y)
 pred = clf.predict(test_X)
 pred = le.inverse_transform(pred)
 test['predict'] = pred
-test[['user_id', 'predict']].to_csv('./result/xgbst.csv', index=False)
+test[['user_id', 'predict']].to_csv('./result/xgbst1.0.csv', index=False)
 '''

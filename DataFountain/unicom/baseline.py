@@ -24,8 +24,8 @@ params={
 }
 
 # 读取数据
-train = pd.read_csv(path + 'train.csv')
-test = pd.read_csv(path + 'test.csv')
+train = pd.read_csv(path + 'train_all.csv')
+test = pd.read_csv(path +'republish_test.csv')
 
 '''
 简单分析数据：
@@ -72,7 +72,7 @@ from sklearn.model_selection import StratifiedKFold
 from sklearn.metrics import f1_score
 import numpy as np
 
-# 自定义F1评价函数
+# 自定义F1评价函数(好像没有用到)
 def f1_score_vali(preds, data_vali):
     labels = data_vali.get_label()
     preds = np.argmax(preds.reshape(15, -1), axis=0)
