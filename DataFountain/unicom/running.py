@@ -44,22 +44,27 @@ train['3_total_fee'] = train['3_total_fee'].apply(lambda x : float(x))
 test['3_total_fee'] = test['3_total_fee'].apply(lambda x : float(x))
 
 #清洗
+'''
 train = train.drop(train[train['1_total_fee'] > 3100].index)
 train = train.drop(train[train['2_total_fee'] > 3100].index)
 train = train.drop(train[train['3_total_fee'] > 3100].index)
 train = train.drop(train[train['4_total_fee'] > 3100].index)
 train = train.drop(train[train['month_traffic'] > 6000].index)
-'''无变换
+无变换
 train = train.drop(train[(train['contract_time'] > 0) &(train['current_service'] == 3)].index)
 train = train.drop(train[(train['contract_time'] > 0) &(train['current_service'] == 4)].index)
 train = train.drop(train[(train['contract_time'] > 0) &(train['current_service'] == 5)].index)
-'''
+
 train = train.drop(train[train['pay_times'] > 30].index)
 train = train.drop(train[train['last_month_traffic'] > 5000].index)
-#train = train.drop(train[train['local_trafffic_month'] > 10000].index) 试一下20000
+#train = train.drop(train[train['local_trafffic_month'] > 10000].index)
 train = train.drop(train[train['local_caller_time'] > 1500].index)
-#train = train.drop(train[train['service1_caller_time'] > 1500].index)
-#train = train.drop(train[train['service2_caller_time'] > 5000].index)
+train = train.drop(train[train['service1_caller_time'] > 1500].index)
+train = train.drop(train[train['service2_caller_time'] > 5000].index)
+'''
+train['2_total_fee'].replace([-0.001,-1], -1)
+train['3_total_fee'].replace([-0.001,-1], -1)
+train['4_total_fee'].replace([-0.001,-1], -1)
 
 ntrain = train.shape[0]
 ntest = test.shape[0]
@@ -86,6 +91,11 @@ train_test['is_promise_low_consume'] = train_test['is_promise_low_consume'].asty
 train_test['net_service'] = train_test['net_service'].astype(str)
 train_test['complaint_level'] = train_test['complaint_level'].astype(str)
 train_test['gender'] = train_test['gender'].astype(str)
+
+#train_test['fee'] = train_test['1_total_fee'] + train_test['2_total_fee'] + train_test['3_total_fee'] + train_test['4_total_fee']
+train_test['fee'] = train_test['pay_times'] * train_test['pay_num']
+#train_test['traffic'] = train_test['month_traffic'] + train_test['last_month_traffic']
+
 
 train_test = pd.get_dummies(train_test)
 train_X = train_test[:ntrain]
@@ -145,7 +155,7 @@ clf.fit(train_X, train_y)
 pred = clf.predict(test_X)
 pred = le.inverse_transform(pred)
 test['predict'] = pred
-test[['user_id', 'predict']].to_csv('./result/lgb_clear1.0.csv', index=False)
+test[['user_id', 'predict']].to_csv('./result/lgb_clear1.3.csv', index=False)
 
 
 '''
