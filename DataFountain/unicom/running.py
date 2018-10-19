@@ -92,8 +92,8 @@ train_test['net_service'] = train_test['net_service'].astype(str)
 train_test['complaint_level'] = train_test['complaint_level'].astype(str)
 train_test['gender'] = train_test['gender'].astype(str)
 
-#train_test['fee'] = train_test['1_total_fee'] + train_test['2_total_fee'] + train_test['3_total_fee'] + train_test['4_total_fee']
-train_test['fee'] = train_test['pay_times'] * train_test['pay_num']
+#train_test['caller'] = train_test['local_caller_time'] + train_test['service1_caller_time'] + train_test['service2_caller_time']
+train_test['fee1'] = train_test['pay_times'] * train_test['pay_num']
 #train_test['traffic'] = train_test['month_traffic'] + train_test['last_month_traffic']
 
 
@@ -122,8 +122,8 @@ param_rf = {}
 #,num_leaves=180,max_depth=8,learning_rate=0.1,seed=1500,colsample_bytree=0.6,subsample=0.7
 #,num_leaves=35,max_depth=8,learning_rate=0.05,seed=2018,colsample_bytree=0.8,subsample=0.9
 
-#grid(lgb.LGBMClassifier(bjective='multiclass', boosting_type='gbdt',num_leaves=35,max_depth=8,learning_rate=0.05,
-#                        seed=2018,colsample_bytree=0.8,subsample=0.9)).grid_get(train_X,train_y,param_rf)
+grid(lgb.LGBMClassifier(bjective='multiclass', boosting_type='gbdt',num_leaves=35,max_depth=8,learning_rate=0.05,
+                        seed=2018,colsample_bytree=0.8,subsample=0.9)).grid_get(train_X,train_y,param_rf)
 #,n_estimators=2000
 '''
 def model_cv(model, x, y):
@@ -146,7 +146,7 @@ test['predict'] = pred
 test[['user_id', 'predict']].to_csv('./result/rf.csv', index=False)
 '''
 
-
+'''
 clf = lgb.LGBMClassifier(bjective='multiclass',boosting_type='gbdt',num_leaves=35,max_depth=8,learning_rate=0.05,
                          seed=2018,colsample_bytree=0.8,subsample=0.9,n_estimators=2000)
 clf1 = lgb.LGBMClassifier(bjective='multiclass',boosting_type='gbdt',num_leaves=180,max_depth=8,learning_rate=0.1,
@@ -156,7 +156,7 @@ pred = clf.predict(test_X)
 pred = le.inverse_transform(pred)
 test['predict'] = pred
 test[['user_id', 'predict']].to_csv('./result/lgb_clear1.3.csv', index=False)
-
+'''
 
 '''
 clf = XGBClassifier(max_depth=12, learning_rate=0.05,
